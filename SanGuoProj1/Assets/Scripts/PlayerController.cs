@@ -8,7 +8,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody2D m_rigidBody;
-    private bool m_isMoveable = true;
+    private bool m_isMoveable = false;
     private bool m_isInputActive = false;
     private float m_horizontalMoveInput;
     private Animator m_animator;
@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
         EventManager.StopListening(EventName.CATCH, OnTargetCatch);
     }
 
-    void OnTargetCatch()
+    void OnTargetCatch(object param)
     {
         m_animator.SetTrigger("Catch");
     }
@@ -37,12 +37,6 @@ public class PlayerController : MonoBehaviour
         m_animator = GetComponentInChildren<Animator>();
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("BouncePad"), LayerMask.NameToLayer("Player"), true);
     }
-    
-    private void FixedUpdate()
-    {
-        PlayerMovement();
-    }
-
     void PlayerMovement()
     {
         m_horizontalMoveInput = Input.GetAxisRaw("Horizontal");

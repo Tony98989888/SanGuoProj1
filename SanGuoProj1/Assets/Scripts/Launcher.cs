@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -13,13 +15,12 @@ public class Launcher : MonoBehaviour
     private void Start()
     {
         m_animator = GetComponent<Animator>();
-        StartCoroutine(LauncherThrow());
     }
 
     public void LauncherAnimationFinished()
     {
         var bounceTarget = GameObject.Instantiate(m_bounceTarget, transform.position, transform.rotation);
-        EventManager.TriggerEvent(EventName.LAUNCHER_ANIMATION_FINISHED);
+        EventManager.TriggerEvent(EventName.LAUNCHER_ANIMATION_FINISHED, this.gameObject);
     }
 
     IEnumerator LauncherThrow()
@@ -27,4 +28,12 @@ public class Launcher : MonoBehaviour
         yield return new WaitForSeconds(Random.Range(m_minThrowInterval, m_maxThrowInterval));
         m_animator.SetTrigger("Throw");
     }
+
+    // private void OnTriggerEnter2D(Collider2D col)
+    // {
+    //     if (col.CompareTag("Catchable"))
+    //     {
+    //         EventManager.TriggerEvent(EventName.TARGET_CATCHED, this.gameObject);
+    //     }
+    // }
 }
