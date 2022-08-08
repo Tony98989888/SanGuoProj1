@@ -24,6 +24,7 @@ public class HookLogic : MonoBehaviour
 
     enum HookState
     {
+        Wait,
         Rotate,
         Launch,
         Retract,
@@ -34,18 +35,25 @@ public class HookLogic : MonoBehaviour
     private void OnEnable()
     {
         EventManager.StartListening(EventName.TARGET_CATCHED, OnTargetCatched);
+        GameStartComponent.OnGameStart += OnGameStart;
+    }
+
+    private void OnGameStart()
+    {
+        m_hookState = HookState.Rotate;
     }
 
     private void OnDisable()
     {
         EventManager.StopListening(EventName.TARGET_CATCHED, OnTargetCatched);
+        GameStartComponent.OnGameStart -= OnGameStart;
     }
 
     // Start is called before the first frame update
     void Start()
     {
         m_startPos = transform.position;
-        m_hookState = HookState.Rotate;
+        m_hookState = HookState.Wait;
     }
 
     // Update is called once per frame

@@ -17,6 +17,16 @@ public class Launcher : MonoBehaviour
         m_animator = GetComponent<Animator>();
     }
 
+    private void OnEnable()
+    {
+        GameStartComponent.OnGameStart += OnGameStart;
+    }
+
+    private void OnDisable()
+    {
+        GameStartComponent.OnGameStart -= OnGameStart;
+    }
+
     public void LauncherAnimationFinished()
     {
         var bounceTarget = GameObject.Instantiate(m_bounceTarget, transform.position, transform.rotation);
@@ -29,11 +39,8 @@ public class Launcher : MonoBehaviour
         m_animator.SetTrigger("Throw");
     }
 
-    // private void OnTriggerEnter2D(Collider2D col)
-    // {
-    //     if (col.CompareTag("Catchable"))
-    //     {
-    //         EventManager.TriggerEvent(EventName.TARGET_CATCHED, this.gameObject);
-    //     }
-    // }
+    void OnGameStart()
+    {
+        StartCoroutine(LauncherThrow());
+    }
 }
