@@ -13,25 +13,33 @@ public class Launcher : MonoBehaviour
     [SerializeField] private float m_maxThrowInterval = 5;
 
     [SerializeField] private Transform m_launcherTargetInitPos;
+
+    private BounceTarget m_currentBounceTarget;
+
+    private Vector3 m_initPos;
     
     private void Start()
     {
         m_animator = GetComponent<Animator>();
+        m_initPos = transform.position;
     }
 
     private void OnEnable()
     {
         GameStartComponent.OnGameStart += OnGameStart;
+        EventManager.StartListening(EventName.ON_GRAB_AREA_ENTER, OnGrabAreaEnter);
     }
 
     private void OnDisable()
     {
         GameStartComponent.OnGameStart -= OnGameStart;
+        EventManager.StopListening(EventName.ON_GRAB_AREA_ENTER, OnGrabAreaEnter);
     }
 
     public void LauncherAnimationFinished()
     {
         var bounceTarget = GameObject.Instantiate(m_bounceTarget, m_launcherTargetInitPos.position, m_launcherTargetInitPos.rotation);
+        m_currentBounceTarget = bounceTarget.GetComponent<BounceTarget>();
         EventManager.TriggerEvent(EventName.LAUNCHER_ANIMATION_FINISHED, this.gameObject);
     }
 
@@ -47,6 +55,22 @@ public class Launcher : MonoBehaviour
     void OnGameStart()
     {
         // StartCoroutine(LauncherThrow());
+        m_animator.SetTrigger("Throw");
+    }
+
+    void OnThrowEnd()
+    {
+        this.transform.position = m_initPos;
+    }
+
+    void OnGrabAreaEnter(GameObject target)
+    {
+        if (!m_currentBounceTarget.IsBounced)
+        {
+            return;
+        }
+        this.transform.position = target.transform.position;
+        Destroy(target.gameObject);
         m_animator.SetTrigger("Throw");
     }
 }

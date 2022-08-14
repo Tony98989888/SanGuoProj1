@@ -13,10 +13,14 @@ public class BounceTarget : ICatchable
 
     [SerializeField] private LayerMask m_bouncePadLayer;
     [SerializeField] private LayerMask m_catcherLayer;
+    [SerializeField] private LayerMask m_grabAreaLayer;
 
+    public bool IsBounced => m_isBounced;
+    
     private Vector2 m_lastFrameVelocity;
 
     private bool m_isSpawned = false;
+    private bool m_isBounced = false;
 
     // Start is called before the first frame update
     void Awake()
@@ -53,6 +57,7 @@ public class BounceTarget : ICatchable
             m_speedFactor += 0.1f;
             m_rigidBody.velocity = reflectVec.normalized * m_speedFactor;
             EventManager.TriggerEvent(EventName.ON_BOUNCE_TARGET_BOUNCE, this.gameObject);
+            m_isBounced = true;
         }
 
         // if ((m_catcherLayer & 1 << col.gameObject.layer) == 1 << col.gameObject.layer)
@@ -61,6 +66,14 @@ public class BounceTarget : ICatchable
         //     EventManager.TriggerEvent(EventName.CATCH);
         //     Destroy(gameObject);
         // }
+    }
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if ((m_grabAreaLayer & 1 << col.gameObject.layer) == 1 << col.gameObject.layer)
+        {
+            EventManager.TriggerEvent(EventName.ON_GRAB_AREA_ENTER, this.gameObject);
+        }
     }
 
     private void OnThrowAnimationFinished(GameObject param)
