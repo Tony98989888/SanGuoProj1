@@ -16,6 +16,8 @@ public class BounceTarget : ICatchable
 
     private Vector2 m_lastFrameVelocity;
 
+    private bool m_isSpawned = false;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -41,13 +43,16 @@ public class BounceTarget : ICatchable
 
     private void OnCollisionEnter2D(Collision2D col)
     {
+        Debug.Log(col.gameObject.name);
         if ((m_bouncePadLayer & 1 << col.gameObject.layer) == 1 << col.gameObject.layer)
         {
             var reflectVec = Vector2.Reflect(m_lastFrameVelocity, col.contacts[0].normal);
             Debug.DrawRay(col.contacts[0].point, -m_lastFrameVelocity, Color.blue, 2f);
             Debug.DrawRay(col.contacts[0].point, col.contacts[0].normal, Color.yellow, 2f);
             Debug.DrawRay(col.contacts[0].point, reflectVec, Color.red, 2f);
+            m_speedFactor += 0.1f;
             m_rigidBody.velocity = reflectVec.normalized * m_speedFactor;
+            EventManager.TriggerEvent(EventName.ON_BOUNCE_TARGET_BOUNCE, this.gameObject);
         }
 
         // if ((m_catcherLayer & 1 << col.gameObject.layer) == 1 << col.gameObject.layer)
@@ -60,6 +65,10 @@ public class BounceTarget : ICatchable
 
     private void OnThrowAnimationFinished(GameObject param)
     {
+        if (m_isSpawned)
+        {
+            return;
+        }
         var launcher = GameObject.FindWithTag("Launcher").transform;
         // transform.position = launcher.transform.position;
         var randomDir = MathHelper.RandomVector2BetweenAngle(130.0f * Mathf.Deg2Rad, 50.0f * Mathf.Deg2Rad);
@@ -76,6 +85,7 @@ public class BounceTarget : ICatchable
         Debug.DrawRay(launcher.position,
             new Vector3(Mathf.Cos(130.0f * Mathf.Deg2Rad), Mathf.Sin(130.0f * Mathf.Deg2Rad), launcher.position.z),
             Color.yellow, 2f);
+        m_isSpawned = true;
     }
 
     public void OnCatch()

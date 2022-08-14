@@ -1,24 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
-public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
+public abstract class Singleton<T> : MonoBehaviour where T : new()
 {
-    public static Singleton<T> Instance
+    private static T m_instance;
+    public static T Instance
     {
-        get;
-        private set;
-    }
-
-    protected virtual void Awake()
-    {
-        if (Instance != null)
+        get
         {
-            Debug.LogError("Instance Already Exist!");
-            Destroy(this);
-            return;
+            if (m_instance == null)
+            {
+                m_instance = new T();
+            }
+
+            return m_instance;
         }
-        Instance = this;
     }
 
+    protected void OnDestroy()
+    {
+        m_instance = default;
+    }
 }

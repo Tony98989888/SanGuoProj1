@@ -11,6 +11,8 @@ public class Launcher : MonoBehaviour
     private Animator m_animator;
     [SerializeField] private float m_minThrowInterval = 3;
     [SerializeField] private float m_maxThrowInterval = 5;
+
+    [SerializeField] private Transform m_launcherTargetInitPos;
     
     private void Start()
     {
@@ -29,18 +31,22 @@ public class Launcher : MonoBehaviour
 
     public void LauncherAnimationFinished()
     {
-        var bounceTarget = GameObject.Instantiate(m_bounceTarget, transform.position, transform.rotation);
+        var bounceTarget = GameObject.Instantiate(m_bounceTarget, m_launcherTargetInitPos.position, m_launcherTargetInitPos.rotation);
         EventManager.TriggerEvent(EventName.LAUNCHER_ANIMATION_FINISHED, this.gameObject);
     }
 
     IEnumerator LauncherThrow()
     {
-        yield return new WaitForSeconds(Random.Range(m_minThrowInterval, m_maxThrowInterval));
-        m_animator.SetTrigger("Throw");
+        while (GameManager.Instance.CurrentGameState != GameState.OVER)
+        {
+            yield return new WaitForSeconds(Random.Range(m_minThrowInterval, m_maxThrowInterval));
+            m_animator.SetTrigger("Throw");
+        }
     }
 
     void OnGameStart()
     {
-        StartCoroutine(LauncherThrow());
+        // StartCoroutine(LauncherThrow());
+        m_animator.SetTrigger("Throw");
     }
 }

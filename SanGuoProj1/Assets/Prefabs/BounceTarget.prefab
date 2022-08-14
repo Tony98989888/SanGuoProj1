@@ -120,7 +120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e852484e3815b9641b2453836e2b6d44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_speedFactor: 4
+  m_speedFactor: 12
   m_bouncePadLayer:
     serializedVersion: 2
     m_Bits: 64
