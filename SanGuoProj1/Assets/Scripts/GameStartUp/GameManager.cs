@@ -23,9 +23,9 @@ public class GameManager : Singleton<GameManager>
     private int m_score = 0;
 
     [SerializeField]
-    private float m_bounceTargetSpeed = 12.0f;
+    private static float m_bounceTargetSpeed = 12.0f;
 
-    public float BounceTargetSpeed
+    public static float BounceTargetSpeed
     {
         get { return m_bounceTargetSpeed;}
         set { m_bounceTargetSpeed = value; }
@@ -40,12 +40,14 @@ public class GameManager : Singleton<GameManager>
     {
         GameStartComponent.OnGameStart += StartGame;
         EventManager.StartListening(EventName.ON_BOUNCE_TARGET_BOUNCE, OnBounceTargetBounce);
+        EventManager.StartListening(EventName.ON_GRAB_AREA_ENTER, OnGrabAreaEnter);
     }
 
     private void OnDisable()
     {
         GameStartComponent.OnGameStart -= StartGame;
         EventManager.StopListening(EventName.ON_BOUNCE_TARGET_BOUNCE, OnBounceTargetBounce);
+        EventManager.StopListening(EventName.ON_GRAB_AREA_ENTER, OnGrabAreaEnter);
     }
 
     private void UpdateGameState(GameState state)
@@ -92,6 +94,15 @@ public class GameManager : Singleton<GameManager>
     {
         m_bounceTargetBounceTime += 1;
         m_scoreText.text = m_bounceTargetBounceTime.ToString();
-        m_bounceTargetSpeed += 0.1f;
+        //m_bounceTargetSpeed += 2.0f;
+    }
+
+    private void OnGrabAreaEnter(GameObject obj)
+    {
+        m_bounceTargetSpeed += 2.0f;
+        if (m_bounceTargetSpeed > 50.0f)
+        {
+            m_bounceTargetSpeed = 50.0f;
+        }
     }
 }

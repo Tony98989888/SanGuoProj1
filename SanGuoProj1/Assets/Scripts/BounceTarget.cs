@@ -16,7 +16,7 @@ public class BounceTarget : ICatchable
     [SerializeField] private LayerMask m_grabAreaLayer;
 
     public bool IsBounced => m_isBounced;
-    
+
     private Vector2 m_lastFrameVelocity;
 
     private bool m_isSpawned = false;
@@ -26,7 +26,8 @@ public class BounceTarget : ICatchable
     void Awake()
     {
         m_rigidBody = GetComponent<Rigidbody2D>();
-        Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("BounceTarget"), LayerMask.NameToLayer("BounceTarget"), true);
+        Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("BounceTarget"), LayerMask.NameToLayer("BounceTarget"),
+            true);
     }
 
     // Update is called once per frame
@@ -47,7 +48,6 @@ public class BounceTarget : ICatchable
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        Debug.Log(col.gameObject.name);
         if ((m_bouncePadLayer & 1 << col.gameObject.layer) == 1 << col.gameObject.layer)
         {
             var reflectVec = Vector2.Reflect(m_lastFrameVelocity, col.contacts[0].normal);
@@ -55,7 +55,8 @@ public class BounceTarget : ICatchable
             Debug.DrawRay(col.contacts[0].point, col.contacts[0].normal, Color.yellow, 2f);
             Debug.DrawRay(col.contacts[0].point, reflectVec, Color.red, 2f);
             // m_speedFactor += 0.1f;
-            m_rigidBody.velocity = reflectVec.normalized * GameManager.Instance.BounceTargetSpeed;
+            m_rigidBody.velocity = reflectVec.normalized * GameManager.BounceTargetSpeed;
+            Debug.Log(GameManager.BounceTargetSpeed);
             EventManager.TriggerEvent(EventName.ON_BOUNCE_TARGET_BOUNCE, this.gameObject);
             m_isBounced = true;
         }
@@ -82,12 +83,13 @@ public class BounceTarget : ICatchable
         {
             return;
         }
+
         var launcher = GameObject.FindWithTag("Launcher").transform;
         // transform.position = launcher.transform.position;
         var randomDir = MathHelper.RandomVector2BetweenAngle(130.0f * Mathf.Deg2Rad, 50.0f * Mathf.Deg2Rad);
         m_rigidBody.velocity =
             (new Vector3(randomDir.x, -Mathf.Abs(randomDir.y), launcher.position.z))
-            .normalized * m_speedFactor;
+            .normalized * GameManager.BounceTargetSpeed;
         Debug.DrawRay(launcher.position,
             (new Vector3(randomDir.x, -Mathf.Abs(randomDir.y), launcher.position.z)).normalized,
             Color.green, 2f);
@@ -98,6 +100,7 @@ public class BounceTarget : ICatchable
         Debug.DrawRay(launcher.position,
             new Vector3(Mathf.Cos(130.0f * Mathf.Deg2Rad), Mathf.Sin(130.0f * Mathf.Deg2Rad), launcher.position.z),
             Color.yellow, 2f);
+        Debug.Log(GameManager.BounceTargetSpeed);
         m_isSpawned = true;
     }
 
