@@ -54,8 +54,8 @@ public class BounceTarget : ICatchable
             Debug.DrawRay(col.contacts[0].point, -m_lastFrameVelocity, Color.blue, 2f);
             Debug.DrawRay(col.contacts[0].point, col.contacts[0].normal, Color.yellow, 2f);
             Debug.DrawRay(col.contacts[0].point, reflectVec, Color.red, 2f);
-            m_speedFactor += 0.1f;
-            m_rigidBody.velocity = reflectVec.normalized * m_speedFactor;
+            // m_speedFactor += 0.1f;
+            m_rigidBody.velocity = reflectVec.normalized * GameManager.Instance.BounceTargetSpeed;
             EventManager.TriggerEvent(EventName.ON_BOUNCE_TARGET_BOUNCE, this.gameObject);
             m_isBounced = true;
         }

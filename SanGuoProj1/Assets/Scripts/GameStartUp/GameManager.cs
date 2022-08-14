@@ -21,7 +21,16 @@ public class GameManager : Singleton<GameManager>
     private int m_bounceTargetBounceTime = 0;
 
     private int m_score = 0;
-    
+
+    [SerializeField]
+    private float m_bounceTargetSpeed = 12.0f;
+
+    public float BounceTargetSpeed
+    {
+        get { return m_bounceTargetSpeed;}
+        set { m_bounceTargetSpeed = value; }
+    }
+
     [SerializeField]
     private TMP_Text m_scoreText;
     
@@ -83,5 +92,6 @@ public class GameManager : Singleton<GameManager>
     {
         m_bounceTargetBounceTime += 1;
         m_scoreText.text = m_bounceTargetBounceTime.ToString();
+        m_bounceTargetSpeed += 0.1f;
     }
 }
