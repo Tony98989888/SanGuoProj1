@@ -7,6 +7,7 @@ TagManager:
   - Launcher
   - Hook
   - Catchable
+  - Wheel
   layers:
   - Default
   - TransparentFX

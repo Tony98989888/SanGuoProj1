@@ -99,10 +99,10 @@ public class GameManager : Singleton<GameManager>
 
     private void OnGrabAreaEnter(GameObject obj)
     {
-        m_bounceTargetSpeed += 2.0f;
-        if (m_bounceTargetSpeed > 50.0f)
+        m_bounceTargetSpeed += 0.5f;
+        if (m_bounceTargetSpeed > 20.0f)
         {
-            m_bounceTargetSpeed = 50.0f;
+            m_bounceTargetSpeed = 20.0f;
         }
     }
 }

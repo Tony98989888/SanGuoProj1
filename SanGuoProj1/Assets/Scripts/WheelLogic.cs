@@ -11,6 +11,10 @@ public class WheelLogic : MonoBehaviour
     [SerializeField] private List<Transform> m_wayPointsLeft;
     [SerializeField] private List<Transform> m_wayPointsRight;
 
+    [SerializeField] private Collider2D m_collider;
+
+    private Rigidbody2D m_rigidbody;
+
     private bool m_isLeft = false;
 
     private Vector3 m_targetPos;
@@ -22,8 +26,13 @@ public class WheelLogic : MonoBehaviour
     [SerializeField] private float m_minDuration = 2.0f;
     [SerializeField] private float m_maxDuration = 5.0f;
 
+    private Vector3 m_moveDir;
+
+    [SerializeField] private float m_wheelMoveSpeed;
+
     private void GenerateWayPoints()
     {
+        m_collider.enabled = true;
         bool isStartLeft = Random.Range(0.0f, 1.0f) >= 0.5f;
         if (isStartLeft)
         {
@@ -40,7 +49,14 @@ public class WheelLogic : MonoBehaviour
             m_targetPos = m_wayPointsLeft[Random.Range(0, m_wayPointsLeft.Count)].position;
         }
 
+        m_moveDir = (m_targetPos - m_startPos).normalized;
         m_ready = true;
+    }
+
+    private void Start()
+    {
+        m_rigidbody = GetComponent<Rigidbody2D>();
+        m_collider = GetComponent<Collider2D>();
     }
 
     private void Update()
@@ -51,8 +67,7 @@ public class WheelLogic : MonoBehaviour
         }
 
         Debug.DrawLine(m_targetPos, m_startPos);
-        transform.position = Vector3.MoveTowards(transform.position, m_targetPos, m_speed * Time.deltaTime);
-        if (Vector3.Distance(transform.position, m_targetPos) < 0.1f)
+        if (Vector3.Distance(transform.position, m_targetPos) < 2f)
         {
             m_ready = false;
             StartCoroutine(MoveWheel());
@@ -78,5 +93,29 @@ public class WheelLogic : MonoBehaviour
     void OnGameStart()
     {
         StartCoroutine(MoveWheel());
+    }
+
+    // private void OnTriggerEnter2D(Collider2D col)
+    // {
+    //     if (col.gameObject.CompareTag("Catchable"))
+    //     {
+    //         this.m_collider.enabled = false;
+    //     }
+    // }
+    //
+    // private void OnTriggerExit2D(Collider2D col)
+    // {
+    //     if (col.gameObject.CompareTag("Catchable"))
+    //     {
+    //         this.m_collider.enabled = true;
+    //     }
+    // }
+
+    private void FixedUpdate()
+    {
+        if (m_ready && m_targetPos != null)
+        {
+            m_rigidbody.MovePosition(transform.position + m_moveDir * Time.deltaTime * m_wheelMoveSpeed);
+        }
     }
 }
